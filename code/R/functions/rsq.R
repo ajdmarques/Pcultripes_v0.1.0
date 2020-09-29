@@ -1,0 +1,1 @@
+rsq <- function (x, y) cor(x, y) ^ 2
