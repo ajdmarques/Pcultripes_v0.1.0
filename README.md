@@ -2,7 +2,7 @@
 
 Manuscript
 
-Marques, A. J. D., Hanson, J. O., Camacho-Sanchez, M., Martínez-Solano, I., Moritz, C, Tarroso, P., Velo-Antón, G., Verissimo, A., & Carvalho, S. B. (2020) Comparing preliminary tests for selection in a range-wide genomic scan of an elusive Iberian amphibian (Pelobates cultripes)
+Marques, A. J. D., Hanson, J. O., Camacho-Sanchez, M., Martínez-Solano, I., Moritz, C, Tarroso, P., Velo-Antón, G., Verissimo, A., & Carvalho, S. B. (2021) Comparing preliminary tests for selection in a range-wide genomic scan of an elusive Iberian amphibian (Pelobates cultripes). _Conservation Genetics_
 
 We compare the results of eight tests for selection, representing three methodological approaches, in a range-wide genomic scan of an Iberian amphibian, Pelobates cultripes.
 
