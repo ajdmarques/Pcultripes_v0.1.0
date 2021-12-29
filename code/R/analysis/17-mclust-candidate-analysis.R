@@ -19,6 +19,8 @@ for (i in seq_along(cand_name)){
   eig[[i]] <- read.csv(paste0("data/intermediate/pca-adapt/pelcul/cand_eigenvecter_",
                               cand_name[i],".csv"))
   eig[[i]] <- eig[[i]][,-1]
+  #z <- c(107150,107151) # Remove samples from Cuidade Real
+  #eig[[i]] <- eig[[i]][!eig[[i]]$sample.id %in% z,]
 }
 ## MSOD causes script to crash there it will be removed
 #eig <- eig[-8]
@@ -27,7 +29,8 @@ for (i in seq_along(cand_name)){
 
 ## environmental variables
 env_data <- read.csv('data/intermediate/vif-results/env.csv', row.names = 1)
-env_data <- env_data[!duplicated(env_data$.),]
+#env_data <- env_data[!duplicated(env_data$.),]
+env_data <- env_data[env_data$. %in% eig[[i]]$sample.id,]
 
 
 ## create directory to save Venn diagrams results
@@ -145,7 +148,7 @@ for (i in seq_along(mod1dr)){
          #display="pop", 
          pch=21, cex=1.5, col="gray32", 
          #scaling=3,
-         bg=mclust_parameters$bg[mod1dr[[i]]$class])
+         bg=mclust_parameters$bg[mod1dr[[i]]$classification])
   ## Array details
   title(main=cand_name[i],
         cex.lab=1, cex.main = 1 
@@ -171,7 +174,7 @@ for (i in seq_along(mod1dr)){
   points(mod1dr[[i]]$x[,1] ~ mod1dr[[i]]$x[,3],
          #mod1dr[[i]]$x, 
          display="pop", pch=21, cex=1.5, col="gray32", scaling=3,
-         bg=mclust_parameters$bg[mod1dr[[i]]$class])
+         bg=mclust_parameters$bg[mod1dr[[i]]$classification])
   #text(snp.rda, scaling=3, display="bp", col="#0868ac", cex=1)                           # the predictors
   #legend("topright", legend=levels(mod1dr[[i]]$class), 
   #       bty="n", col="gray32", pch=21, cex=1, pt.bg= mclust_parameters$bg)
@@ -179,11 +182,12 @@ for (i in seq_along(mod1dr)){
 } 
 ## join cluster assignments to environmental data
 cand_clust <- lapply(seq_along(mod1), function(i) {
-  cbind(sambada_env[,1:2], eig[[i]]$pop, eig[[i]]$clust,
+  cbind(env_data[,1:3], 
+        eig[[i]]$pop, eig[[i]]$clust,
         mod1[[i]]$classification, mod1[[i]]$uncertainty)
 })
 for (i in seq_along(cand_clust)){
-  colnames(cand_clust[[i]]) <- c('lon','lat','lineage','env_clust','cand_clust','uncertainty')
+  colnames(cand_clust[[i]]) <- c('vaucher','lat','lon','lineage','env_clust','cand_clust','uncertainty')
   write.csv(cand_clust[[i]], paste0(curr_dir,'/cand_clust_',cand_name[[i]],'.csv'))
 }
 
@@ -197,11 +201,11 @@ k4 <- list()
 k5 <- list()
 for (i in 1:length(cand_clust)){
   for (l in 1:length(lat)){
-    k1[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],5] == 1)
-    k2[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],5] == 2)
-    k3[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],5] == 3)
-    k4[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],5] == 4)
-    k5[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],5] == 5)
+    k1[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],"cand_clust"] == 1)
+    k2[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],"cand_clust"] == 2)
+    k3[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],"cand_clust"] == 3)
+    k4[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],"cand_clust"] == 4)
+    k5[l] = sum(cand_clust[[i]][cand_clust[[i]]$lat==lat[l],"cand_clust"] == 5)
   }
   pie_loc[[i]]<- cbind.data.frame(
     unique(cand_clust[[i]]$lat), unique(cand_clust[[1]]$lon),

@@ -25,6 +25,11 @@ dir.create(curr_dir, showWarnings = FALSE, recursive = TRUE)
 
 {## read data
   snp_admix_data <- readRDS(snp_ol_admix_path)
+  ## Remove Valdemenco
+  x <- snp_metadata[[1]][grep('Valdemanco',snp_metadata[[1]]$locality_id),]$order_id
+  snp_admix_data[[1]] <- snp_admix_data[[1]][!snp_admix_data[[1]]$ind.names %in% x, ]
+  #snp_admix_data[[1]] <- snp_admix_data[[1]][snp_admix_data[[1]]$ind.names %in% snp_metadata[[1]]$order_id,]
+  ## convert to Matrix
   snp_mx <- as.matrix(snp_admix_data[[1]])
   #snp_gi_data <- dartR::gl2gi(snp_admix_data[[1]])
   #dartR::gl2plink(snp_admix_data[[1]], '/snp_admix.raw', curr_dir)
@@ -51,7 +56,11 @@ snp_inp <- apply(snp_mx, 2, function(x)
   replace(x, is.na(x), as.numeric(names(which.max(table(x))))))
   sum(is.na(snp_inp)) # No NAs
 ## Perform RDA
-snp.rda <- rda(snp_inp ~ ., data = env_data[,4:length(colnames(env_data))], scale=T)
+#snp.rda <- rda(snp_inp ~ ., data = env_data[,4:length(colnames(env_data))], scale=T)
+rda_env <- cbind.data.frame(env_data[,2:length(colnames(env_data))], pcadapt_maha)
+snp.rda <- rda(snp_inp ~ ., # aletrantive with Lat/Lon & Mahalanobis distances
+               data = rda_env, 
+               scale=T) 
 ## adj.r.squared is % variaiton described by RDA 
   RsquareAdj(snp.rda)
 ## eigenvalues of constrained axes reflect the variance explained by each canonical axis:
@@ -149,12 +158,16 @@ outliers <- function(x,z){
 cand <- rbind(cand1, cand2, cand3)
   #cand$snp <- as.character(cand$snp)
   ## Add correlations of each candidate SNP with the eight environmental predictors:
-  foo <- matrix(nrow=(ncand), ncol=(length(colnames(env_data))-3))  
-  colnames(foo) <- colnames(env_data[,4:length(colnames(env_data))])
+  #foo <- matrix(nrow=(ncand), ncol=(length(colnames(env_data))-3))  
+  #colnames(foo) <- colnames(env_data[,4:length(colnames(env_data))])
+  foo <- matrix(nrow=(ncand), ncol=length(rda_env))
+  colnames(foo) <- colnames(rda_env)
 for (i in 1:length(cand$snp)) {
   nam <- cand[i,2]
   snp.gen <- snp_inp[,nam]
-  foo[i,] <- apply(env_data[,4:length(colnames(env_data))],2,function(x) cor(x,snp.gen))
+  #foo[i,] <- apply(env_data[,4:length(colnames(env_data))],2,function(x) cor(x,snp.gen))
+  foo[i,] <- apply(rda_env,
+                   2,function(x) cor(x,snp.gen))
 }
 cand <- cbind.data.frame(cand,foo)  
   head(cand)
@@ -185,6 +198,9 @@ for (i in 1:length(cand$snp)) {
   colnames(cand)[c.corr] <- "correlation"
   # frequency of predictors among outliers
   table(cand$predictor)
+  # remove candidates associated with spatial or ancestral variables
+  confound_var <- c("lat","lon","V1","V2","V3")
+  cand <- cand[!cand$predictor %in% confound_var,]
 }
 
 {## Plot the SNPs
@@ -237,7 +253,7 @@ snp_mx_path <- 'data/intermediate/snp_pop_admix.matrix'
 saveRDS(snp_mx, snp_mx_path)
 
 # cleanup
-rm(snp_admix_data, snp_gi_data, snp_gi_imp, snp_scale, snp_mx, load.rda, snp_inp, snp.rda)
+rm(snp_admix_data, snp_gi_data, snp_gi_imp, snp_scale, snp_mx, snp_inp, snp.rda)
 
 # save session
 session::save.session(session_path("13"), compress = "xz")

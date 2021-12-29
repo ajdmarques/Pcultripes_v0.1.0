@@ -1,3 +1,6 @@
+## Program update on July 2021 require updates to the script.
+## <https://rdrr.io/cran/lfmm/man/lfmm_ridge.html>
+
 source('code/R/functions/session_path.R')
 ## restore session
 session::restore.session(session_path("11"))
@@ -17,10 +20,17 @@ library(LEA)
 
 {## read data
 snp_admix_data <- readRDS(snp_ol_admix_path)
+  ## Remove Valdemenco
+  x <- snp_metadata[[1]][grep('Valdemanco',snp_metadata[[1]]$locality_id),]$order_id
+  snp_admix_data[[1]] <- snp_admix_data[[1]][!snp_admix_data[[1]]$ind.names %in% x, ]
 ## read environmental data
 env_data <- read.csv('data/intermediate/vif-results/env.csv', row.names = 1)
 env_data <- env_data[!duplicated(env_data$.),]
 env_data <- env_data[env_data$. %in% snp_admix_data[[1]]$ind.names,]
+## Mahalanobis distances for ancestry
+pcadapt_maha <- as.data.frame(pcadapt_results[[1]]$scores)
+write.csv(pcadapt_maha, paste0(curr_dir,"/pcadapt_Mahalanobis.csv"))
+pcadapt_maha <- pcadapt_maha[,1:3]
 }
 
 ## create directory to save LFMM results
@@ -50,33 +60,34 @@ points(3,PC$sdev[3]^2, type = "h", lwd = 3, col = "blue")
   ## ridge estimates minimize regularized least-squares problem with an L2 penalty
   y = snp_scale
   ## Change environmnetal variable 
-  x <- env_data[, 4:length(colnames(env_data))] 
-  ## scale environmental variable
-  x <- apply(x, 2, scale)
+  x <- apply(cbind.data.frame(env_data[,2:length(colnames(env_data))], pcadapt_maha),
+             2, scale) # then scale
   ## set the number of principle components based on broken stick
   k = sum(PC$sdev[1:20]^2 >= mean(PC$sdev[1:20]^2))
   ## run cross-validation to determine suitable lambda
-  curr_cv <-
-    lfmm::lfmm_ridge_CV(Y = y, X = x, K = k,
-                        n.fold.row = lfmm_parameters$row, 
-                        n.fold.col = lfmm_parameters$col, 
-                        lambdas =  lfmm_parameters$lambda) %>% 
-    dplyr::group_by(lambda) %>%
-    dplyr::summarise(error_mean = mean(err), error_sd = sd(err)) %>%
-    dplyr::ungroup() %>%
-    tibble::as_tibble()
+  mod.lfmm <-
+    lfmm::lfmm_ridge(Y = y, X = x, K = k,
+                     #n.fold.row = lfmm_parameters$row,
+                     #n.fold.col = lfmm_parameters$col,
+                     lambda =  lfmm_parameters$lambda) #%>% 
+    #dplyr::group_by(lambda) %>%
+    #dplyr::summarise(error_mean = mean(err), error_sd = sd(err)) %>%
+    #dplyr::ungroup() %>%
+    #tibble::as_tibble()
   ## Fit an LFMM, i.e, compute B, U, V estimates
-  snp_lfmm <- lfmm_ridge(Y = y, 
-                         X = x,
-                         lambda = curr_cv$lambda[which.min(curr_cv$error_mean)],
-                         it.max = lfmm_parameters$itr,
-                         K = k)
+  #snp_lfmm <- lfmm_ridge(Y = y, 
+  #                       X = x,
+  #                       lambda = mod.lfmm$lambda[which.min(mod.lfmm$error_mean)],
+  #                       it.max = lfmm_parameters$itr,
+  #                       K = k)
   ## performs association testing using the fitted model
   p.values <- lfmm_test(Y = y,
                         X = x,
-                        lfmm = snp_lfmm,
+                        lfmm = mod.lfmm,
                         calibrate = "gif") 
+  
   pvalues <- p.values$calibrated.pvalue
+  ## Define threshold
   pVal.threshold <- lfmm_parameters$alpha
   al = apply(!pvalues < pVal.threshold, 1, any)
   av = apply(pvalues < pVal.threshold, 2, sum)
@@ -94,10 +105,21 @@ points(3,PC$sdev[3]^2, type = "h", lwd = 3, col = "blue")
   }
   sig.set <-
     data.frame(
-    snp_admix_data[[1]]$loc.names, 
+    rownames(pvalues), 
     apply(pvalues, 2, f1))
   colnames(sig.set) <- c('snp', colnames(pvalues))
-  write.csv(sig.set, paste0(curr_dir,"/lfmm_results.csv"))
+  ## remove rows that also correlate with confounding variables.
+  #confound_var <- c("lat","lon","V1","V2","V3") # list confounding variables
+  #idx <- which(apply(sig.set[,confound_var], 1, any)) # index where confounding variable is significant
+  #sig.set <- sig.set[-idx,] # remove loci significant with confounding variable
+  #idy <- which(apply(sig.set, 1, any)) # index of loci significant with only environment variables
+  #sig.set <- sig.set[idy,] # subset only significant environmental variable loci
+  ## Write output
+  if (length(rownames(sig.set)) == length(rownames(pvalues))) {
+    x = cbind.data.frame(sig.set[,1], pvalues[,c(3:8)], sig.set[,c(4:9)])
+    lfmm_pvalue_path <- paste0(curr_dir,"/lfmm_pvalue.rds")
+    saveRDS(x, lfmm_pvalue_path, compress = "xz")
+  } 
   ## Manhattan plot
   #par(mfrow=c(2, length(colnames(pvalues))/2))
   #for (i in colnames(pvalues)){
