@@ -1,0 +1,9 @@
+title = "lfmm parameters"
+
+[debug]
+K = 2
+alpha = 0.01
+
+[release]
+K = 2
+alpha = 0.01

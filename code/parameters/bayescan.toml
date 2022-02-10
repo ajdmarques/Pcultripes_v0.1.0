@@ -1,0 +1,21 @@
+title = "bayescan parameters"
+
+[debug]
+reps = 4
+fdr = 0.95
+n = 50
+thin = 1
+nbp = 20
+pilot = 50
+burn = 50
+freq = 0.05
+
+[release]
+reps = 4
+fdr = 0.1
+n = 10000
+thin = 10
+nbp = 20
+pilot = 50000
+burn = 100000
+freq = 0.05

@@ -1,0 +1,31 @@
+title = "data processing parameters"
+
+[debug]
+species_eng_names = ["Iberian tree frog", "western spadefoot toad", "Iberian frog"]
+species_sci_names = ["Hyla molleri", "Pelobates cultripes", "Rana iberica"]
+species_atlas_names = ["hylmol", "rantem", "ranibe"] ## note that we use different atlas data for Pelobates for debugging since otherwise raptr cannot be run on my computer with 8GB RAM, which makes debugging dificult
+species_snp_metadata_path = [
+  "data/raw/hyla_dart2017/molleri_31July2017.xlsx",
+  "data/raw/pelobates_dart2019_fake/pelobates_21Feb2019.xlsx",
+  "data/raw/rana_dart2019_fake/rana_21Feb2019.xlsx"
+]
+species_snp_raw_path = [
+  "data/raw/hyla_dart2017/OrderAppendix_1_DHyl17-2984/Report_DHyl17-2984_1_moreOrders_SNP_2.csv",
+  "data/raw/rana_dart2019_fake/OrderAppendix_1_DHyl17-2984/Report_DHyl17-2984_1_moreOrders_SNP_2.csv",
+  "data/raw/pelobates_dart2019_fake/OrderAppendix_1_DHyl17-2984/Report_DHyl17-2984_1_moreOrders_SNP_2.csv"
+]
+
+[release]
+species_eng_names = ["Iberian tree frog", "western spadefoot toad", "Iberian frog"]
+species_sci_names = ["Hyla molleri", "Pelobates cultripes", "Rana iberica"]
+species_atlas_names = ["hylmol", "pelcul", "ranibe"]
+species_snp_metadata_path = [
+  "data/raw/hyla_dart2017/molleri_31July2017.xlsx",
+  "data/raw/pelobates_dart2019_fake/pelobates_21Feb2019.xlsx",
+  "data/raw/rana_dart2019_fake/rana_21Feb2019.xlsx"
+]
+species_snp_raw_path = [
+  "data/raw/hyla_dart2017/OrderAppendix_1_DHyl17-2984/Report_DHyl17-2984_1_moreOrders_SNP_2.csv",
+  "data/raw/rana_dart2019_fake/OrderAppendix_1_DHyl17-2984/Report_DHyl17-2984_1_moreOrders_SNP_2.csv",
+  "data/raw/pelobates_dart2019_fake/OrderAppendix_1_DHyl17-2984/Report_DHyl17-2984_1_moreOrders_SNP_2.csv"
+]

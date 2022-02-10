@@ -1,0 +1,11 @@
+title = "phylin parameters"
+
+[debug]
+distance_metric = "gower"
+model_types = ["gaussian", "exponential", "spherical", "linear"]
+nls_iterations = 1000
+
+[release]
+distance_metric = "gower"
+model_types = ["gaussian", "exponential", "spherical", "linear"]
+nls_iterations = 1000

@@ -1,0 +1,19 @@
+title = "genetic data parameters"
+
+[debug]
+repavg_threshold = 0.95
+locus_callrate_threshold = 0.8
+sample_callrate_threshold = 0.2
+sec_method = "best"
+hwe_alpha = 0.05
+min_maf = 0.05
+rare_allele_threshold = 0.01
+
+[release]
+repavg_threshold = 0.98
+locus_callrate_threshold = 0.8
+sample_callrate_threshold = 0.2
+sec_method = "best"
+hwe_alpha = 0.05
+min_maf = 0.05
+rare_allele_threshold = 0.01

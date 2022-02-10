@@ -1,0 +1,25 @@
+title = "structure parameters"
+
+[debug]
+probability_threshold = 0.01 # samples with a max probability less than this
+                             # are unknown
+numruns = 3
+burnin = 50
+numreps = 100
+noadmix = false
+admburnin = 10
+updatefreq = 1
+freqscorr = true
+maxpops = [1, 2, 3]
+
+[release]
+probability_threshold = 0.75 # samples with a max probability less than this
+                             # are unknown
+numruns = 5
+burnin = 300000
+numreps = 100000
+noadmix = false
+admburnin = 5000
+updatefreq = 1000
+freqscorr = true
+maxpops = [1, 2, 3, 4, 5]

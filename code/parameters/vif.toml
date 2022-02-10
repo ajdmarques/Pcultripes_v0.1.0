@@ -1,0 +1,13 @@
+title = "vif parameters"
+
+[debug]
+env_data = 'pcult_env.csv'
+lat = 'lat'
+lon = 'lon'
+elevate = 'elevate'
+
+[release]
+env_data = 'pcult_env.csv'
+lat = 'lat'
+lon = 'lon'
+elevate = 'elevate'

@@ -1,0 +1,19 @@
+title = "selestim parameters"
+
+[debug]
+reps = 4
+thin = 1
+npilot = 10
+lpilot = 5
+burnin = 50
+length = 100
+limit = 0.3
+
+[release]
+reps = 4
+thin = 10
+npilot = 20
+lpilot = 50000
+burnin = 300000
+length = 200000
+limit = 0.1

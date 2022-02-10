@@ -1,0 +1,13 @@
+title = "NMDS parameters"
+
+[debug]
+distance_metric = "gower"
+stress_threshold = 0.15
+trymax = 100
+try = 100
+
+[release]
+distance_metric = "gower"
+stress_threshold = 0.15
+trymax = 100
+try = 100

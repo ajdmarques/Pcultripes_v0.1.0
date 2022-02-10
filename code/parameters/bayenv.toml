@@ -1,0 +1,9 @@
+title = "bayenv parameters"
+
+[debug]
+matrix_k = 100000
+test_k = 100000
+
+[release]
+matrix_k = 100000
+test_k = 100000

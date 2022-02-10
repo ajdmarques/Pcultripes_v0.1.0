@@ -1,0 +1,11 @@
+title = "general parameters"
+
+[debug]
+number_threads = 2
+resolution = 10000
+crs = "+init=epsg:23030"
+
+[release]
+number_threads = 8
+resolution = 10000
+crs = "+init=epsg:23030"

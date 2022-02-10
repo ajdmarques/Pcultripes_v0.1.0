@@ -1,0 +1,13 @@
+title = "clumpp parameters"
+
+[debug]
+repeats = 10
+mode = 2 # 1 = FullSearch, 2 = Greedy, 3 = LargeKGreedy
+W = 0
+S = 2
+
+[release]
+repeats = 1000
+mode = 2 # 1 = FullSearch, 2 = Greedy, 3 = LargeKGreedy
+W = 0
+S = 2

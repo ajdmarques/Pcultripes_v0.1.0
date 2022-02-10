@@ -1,0 +1,15 @@
+title = "pcadapt parameters"
+
+[debug]
+initial_k = 50
+method = "mahalanobis"
+min_variance_explained = 0.1
+fdr = 0.99
+min_maf = 0.0 # note this is zero because this is accounted for in data cleaning
+
+[release]
+initial_k = 50
+method = "mahalanobis"
+min_variance_explained = 0.1
+fdr = 0.1
+min_maf = 0.0 # note this is zero because this is accounted for in data cleaning
