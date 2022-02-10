@@ -56,25 +56,23 @@ snp_clean_data <-
     p2 <- nn %in% snp_metadata[[i]]$order_id
     if (any(nn %in% snp_metadata[[i]]$order_id))
       x@ind.names[p1[p2]] <- nn[p2]
-    # remove duplicated identifiers by removing samples with most missingness
-#    if (i == 3) {
-#      x@ind.names[which(x@ind.names == "45908")] <- "8932"
-#            x <- remove_duplicate_ids(x)
-#    } else if (i == 2) {
-      x@ind.names[which(x@ind.names == "108541")] <- "106854"
-      x <- remove_duplicate_ids(x)
-#    }
+    # Correct name of sample 106854 
+    x@ind.names[which(x@ind.names == "108541")] <- "106854"
+    # Remove samples identified as likely extraction errors
+    x <- x[!x@ind.names %in% c('107150','107151','107152')]
+    # remove duplicated identifiers
+    x <- x[!duplicated(x@ind.names)] 
     # manually replace sample names where they aren't in the metadata
-#    p1 <- which(!x@ind.names %in% snp_metadata[[i]]$order_id)
-#    if ((length(p1) > 0) &&
-#        assertthat::has_name(snp_metadata[[i]], "collector_id")) {
-#      x@ind.names[p1] <- snp_metadata[[i]]$order_id[
-#        match(gsub("_", " ", x@ind.names[p1], fixed = TRUE),
-#              snp_metadata[[i]]$collector_id)]
-#   }
+    p1 <- which(!x@ind.names %in% snp_metadata[[i]]$order_id)
+    if ((length(p1) > 0) &&
+        assertthat::has_name(snp_metadata[[i]], "collector_id")) {
+      x@ind.names[p1] <- snp_metadata[[i]]$order_id[
+        match(gsub("_", " ", x@ind.names[p1], fixed = TRUE),
+              snp_metadata[[i]]$collector_id)]
+   }
     # assert that all individuals in the SNP dataset are in the metadata table
-#    assertthat::assert_that(all(x@ind.names %in% snp_metadata[[i]]$order_id),
-#                            anyDuplicated(x@ind.names) == 0)
+    assertthat::assert_that(all(x@ind.names %in% snp_metadata[[i]]$order_id),
+                            anyDuplicated(x@ind.names) == 0)
     # clean data
     x %>%
       dartR::gl.filter.repavg(t = genetic_data_parameters$repavg_threshold,
