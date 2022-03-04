@@ -15,7 +15,7 @@ assertthat::assert_that(
     length(spp_parameters$species_sci_names),
   length(spp_parameters$species_atlas_names) ==
     length(spp_parameters$species_eng_names))
-
+'''
 # create planning units
 # load atlas data
 atlas_data <- sf::read_sf("data/raw/atlas/Atlas.shp") %>%
@@ -154,6 +154,7 @@ raster::writeRaster(planning_unit_raster_data, planning_unit_path,
 land_path <- "data/intermediate/land.tif"
 raster::writeRaster(land_raster_data, land_path,
                     NAflag = -9999, overwrite = TRUE)
+'''
 # cleanup
 rm(ip_data, study_area_raster_data, planning_unit_raster_data, cost_raster_data,
    habitat_raster_data, land_raster_data, atlas_data)
