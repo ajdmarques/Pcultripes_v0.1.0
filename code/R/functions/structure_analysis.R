@@ -65,7 +65,7 @@ structure_analysis <- function(x, numruns = 2, maxpops = seq_len(6),
          recursive = TRUE)
   # Save data to file
   ## save snp data
-  dartR::gl2structure(x, outfile = paste0(dir, "/input/data.str"))
+  dartR::gl2structure(x, outfile = "data.str", outpath = paste0(dir, "/input"))
   # Save parameters to file
   ## main parameters
   mp <- readLines("code/templates/mainparams.txt")
